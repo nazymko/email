@@ -1,8 +1,12 @@
 package org.nazymko;
 
 import javax.mail.*;
+import javax.mail.Message;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.StringJoiner;
 
 /**
  * Created by nazymko.patronus@gmail.com
@@ -51,4 +55,33 @@ public class GmailService implements Service {
     public void send(Message message) throws MessagingException {
         Transport.send(message);
     }
+
+    public void send(org.nazymko.mailer.Message message, Session session) throws MessagingException {
+        send(convert(message, session));
+    }
+
+    private Message convert(org.nazymko.mailer.Message message, Session session) throws MessagingException {
+        Message msg = new MimeMessage(session);
+
+        msg.setFrom(new InternetAddress(message.getFrom()));
+
+        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(address(message.getTo())));
+        msg.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(address(message.getBcc())));
+        msg.setRecipients(Message.RecipientType.CC, InternetAddress.parse(address(message.getCc())));
+
+        msg.setSubject(message.getSubject());
+        msg.setText(message.getMessage());
+
+        return msg;
+    }
+
+    private String address(String[] list) {
+        StringJoiner joiner = new StringJoiner(",");
+        for (String element : list) {
+            joiner.add(element);
+        }
+        return joiner.toString();
+    }
+
+
 }

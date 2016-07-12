@@ -16,7 +16,7 @@ public class Main {
 
 
         try {
-
+            /*Example*/
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress("from-email@gmail.com"));
             message.setRecipients(Message.RecipientType.TO,
