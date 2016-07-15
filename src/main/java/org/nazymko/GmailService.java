@@ -60,8 +60,8 @@ public class GmailService implements Service {
         send(convert(message, session));
     }
 
-    private Message convert(org.nazymko.mailer.Message message, Session session) throws MessagingException {
-        Message msg = new MimeMessage(session);
+    private MimeMessage convert(org.nazymko.mailer.Message message, Session session) throws MessagingException {
+        MimeMessage msg = new MimeMessage(session);
 
         msg.setFrom(new InternetAddress(message.getFrom()));
 
@@ -70,7 +70,7 @@ public class GmailService implements Service {
         msg.setRecipients(Message.RecipientType.CC, InternetAddress.parse(address(message.getCc())));
 
         msg.setSubject(message.getSubject());
-        msg.setText(message.getMessage());
+        msg.setContent(message.getMessage(), message.getContext());
 
         return msg;
     }
